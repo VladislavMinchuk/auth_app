@@ -1,6 +1,9 @@
 export default () => ({
   port: parseInt(process.env.PORT, 10) || 5000,
-  jwtSecret: process.env.JWT_SECRET,
+  jwtAccessSecret: process.env.JWT_ACCESS_TOKEN_SECRET,
+  jwtAccessExpiration: process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME,
+  jwtRefreshSecret: process.env.JWT_REFRESH_TOKEN_SECRET,
+  jwtRefreshExpiration: process.env.JWT_REFRESH_TOKEN_EXPIRATION_TIME,
   pswSecret: process.env.PSW_SECRET,
   database: {
     type: 'postgres',

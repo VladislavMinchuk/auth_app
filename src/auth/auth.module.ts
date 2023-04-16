@@ -16,7 +16,7 @@ import { HashService } from './hash.service';
     PassportModule,
     ConfigModule.forRoot({ envFilePath: `.${process.env.NODE_ENV}.env`, load: [config] }),
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
+      secret: process.env.JWT_ACCESS_TOKEN_SECRET,
       signOptions: { expiresIn: '10m' },
     }),
   ],
