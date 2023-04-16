@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { CreateUsersDto } from '../users/dto/createUsers.dto';
 import { HashService } from './hash.service';
+import { User } from 'users/entity/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -28,15 +29,14 @@ export class AuthService {
     return { access_token: this.jwtService.sign(payload) };
   }
   
-  async registration(dto: CreateUsersDto) {
-    const hasUser = await this.validateUser(dto.email, dto.password);
-    
-    if (hasUser) {
-      throw new HttpException('Email is already registered', HttpStatus.CONFLICT);
-    }
-    dto.password = await this.hashService.getHash(dto.password);
-    const user = await this.usersService.createUser(dto);
-    
+  async registration(userObject: CreateUsersDto): Promise<User | null> {
+    const hasUser = await this.validateUser(userObject.email, userObject.password);
+    // If user already exists    
+    if (hasUser) return null;
+    // Hash password and rewrite 'password' field
+    userObject.password = await this.hashService.getHash(userObject.password);
+    const user = await this.usersService.createUser(userObject);
+    // Return new user
     return user;
   }
 }

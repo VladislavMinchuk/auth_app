@@ -12,14 +12,14 @@ export class UsersService {
   }
   
   async findOneByEmail(email: string): Promise<User> {
-    return this.userRepository.findByEmail(email);
+    return await this.userRepository.findByEmail(email);
   }
   
   async findOneById(id: number): Promise<User> {
-    return this.userRepository.findById(id);
+    return await this.userRepository.findById(id);
   }
   
-  findAll() {
-    return this.userRepository.findAll();
+  async findAll(): Promise<User[]> {
+    return await this.userRepository.findAll();
   }
 }

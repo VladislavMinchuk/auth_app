@@ -5,6 +5,8 @@ import {
   UseGuards,
   Request,
   Get,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -18,7 +20,10 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() registerDto: CreateUsersDto): Promise<any> {
-    return await this.authService.registration(registerDto);
+    const newUser = await this.authService.registration(registerDto);
+    
+    if (!newUser) throw new HttpException('Email is already registered', HttpStatus.CONFLICT);
+    return newUser;
   }
 
   @UseGuards(LocalAuthGuard)
