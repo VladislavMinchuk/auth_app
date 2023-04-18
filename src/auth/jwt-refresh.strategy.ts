@@ -5,24 +5,23 @@ import { Request } from 'express';
 import { AuthToken } from './tokens.service';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   constructor(private authToken: AuthToken) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([(request: Request) => {
-        return request?.cookies?.Authentication;
+        return request?.cookies?.Refresh;
       }]),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_ACCESS_TOKEN_SECRET,
+      secretOrKey: process.env.JWT_REFRESH_TOKEN_SECRET,
       passReqToCallback: true
     });
   }
 
   async validate(request: Request, payload: any) {
-    // console.log(request.cookies);
-    // console.log(payload);
-    // const rejectedToken = await this.authToken.isRefreshTokenRejected(request.cookies?.Refresh || '');
+    // Check refresh token in Redis db
+    const rejectedToken = await this.authToken.isRefreshTokenRejected(request.cookies?.Refresh || '');
     
-    // if (rejectedToken) return false;
+    if (rejectedToken) return false;
     
     return { id: payload.id };
   }

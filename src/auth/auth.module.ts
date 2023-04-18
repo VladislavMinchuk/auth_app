@@ -9,18 +9,17 @@ import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import config from '../config';
 import { HashService } from './hash.service';
+import { AuthToken } from './tokens.service';
+import { JwtRefreshStrategy } from './jwt-refresh.strategy';
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
     ConfigModule.forRoot({ envFilePath: `.${process.env.NODE_ENV}.env`, load: [config] }),
-    JwtModule.register({
-      secret: process.env.JWT_ACCESS_TOKEN_SECRET,
-      signOptions: { expiresIn: '10m' },
-    }),
+    JwtModule.register({}),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, HashService],
+  providers: [AuthService, LocalStrategy, JwtStrategy, JwtRefreshStrategy, HashService, AuthToken],
   controllers: [AuthController],
   exports: [AuthService],
 })

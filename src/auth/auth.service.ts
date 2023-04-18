@@ -1,32 +1,41 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { CreateUsersDto } from '../users/dto/createUsers.dto';
 import { HashService } from './hash.service';
 import { User } from 'users/entity/user.entity';
+import { AuthToken, ITokenPayload } from './tokens.service';
+
+export interface ILogin {
+  authCookie: string,
+  refreshCookie: string
+}
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService,
-    private hashService: HashService
+    private hashService: HashService,
+    private authToken: AuthToken
   ) {}
 
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.usersService.findOneByEmail(email);
     const userExist = user && await this.hashService.compareHash(pass, user?.password);
     
-    if (userExist) {
-      const { password, ...result } = user;
-      return result;
-    }
+    if (userExist) return user;
     return null;
   }
   
-  async login(user: any) {
-    const payload = { email: user.email, sub: user.userId };
-    return { access_token: this.jwtService.sign(payload) };
+  async getAuthTokens(user: User): Promise<ILogin> {
+    const tokenPayload: ITokenPayload = { id: user.id };
+    const rt = this.authToken.refreshToken(tokenPayload);
+    
+    // await this.authToken.rejectRefreshToken(rt);
+    
+    return {
+      authCookie: this.authToken.accessToken(tokenPayload),
+      refreshCookie: this.authToken.refreshToken(tokenPayload)
+    };
   }
   
   async registration(userObject: CreateUsersDto): Promise<User | null> {
