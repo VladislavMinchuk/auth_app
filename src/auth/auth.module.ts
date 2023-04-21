@@ -11,6 +11,7 @@ import config from '../config';
 import { HashService } from './hash.service';
 import { AuthToken } from './tokens.service';
 import { JwtRefreshStrategy } from './jwt-refresh.strategy';
+import { SetCookiesInterceptor } from './set-cookies.interceptor';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { JwtRefreshStrategy } from './jwt-refresh.strategy';
     ConfigModule.forRoot({ envFilePath: `.${process.env.NODE_ENV}.env`, load: [config] }),
     JwtModule.register({}),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, JwtRefreshStrategy, HashService, AuthToken],
+  providers: [AuthService, LocalStrategy, JwtStrategy, JwtRefreshStrategy, HashService, AuthToken, SetCookiesInterceptor],
   controllers: [AuthController],
   exports: [AuthService],
 })

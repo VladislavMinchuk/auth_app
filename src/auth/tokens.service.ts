@@ -24,11 +24,11 @@ export class AuthToken {
     return await this.redis.get(token);
   }
   
-  async rejectRefreshToken(token: string): Promise<void> {
-    await this.redis.setex(token, this.configService.get('jwtRefreshExpirationDb'), 'true');
+  async rejectRefreshToken(token: string): Promise<'OK'> {
+    return await this.redis.setex(token, this.configService.get('jwtRefreshExpirationDb'), 'true');
   }
 
-  accessToken(payload: ITokenPayload) {
+  accessToken(payload: ITokenPayload): string {
     return this.jwtService.sign(
       payload,
       {
@@ -38,7 +38,7 @@ export class AuthToken {
     );
   }
   
-  refreshToken(payload: ITokenPayload) {
+  refreshToken(payload: ITokenPayload): string {
     return this.jwtService.sign(
       payload,
       {

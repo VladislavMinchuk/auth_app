@@ -5,10 +5,13 @@ import { HashService } from './hash.service';
 import { User } from 'users/entity/user.entity';
 import { AuthToken, ITokenPayload } from './tokens.service';
 
-export interface ILogin {
+export interface IAuthTokens {
   authCookie: string,
   refreshCookie: string
 }
+
+export const AUTH_COOKIE_NAME = 'Authentication';
+export const REFRESH_COOKIE_NAME = 'Refresh';
 
 @Injectable()
 export class AuthService {
@@ -26,16 +29,15 @@ export class AuthService {
     return null;
   }
   
-  async getAuthTokens(user: User): Promise<ILogin> {
-    const tokenPayload: ITokenPayload = { id: user.id };
-    const rt = this.authToken.refreshToken(tokenPayload);
-    
-    // await this.authToken.rejectRefreshToken(rt);
-    
+  getAuthTokens(tokenPayload: ITokenPayload): IAuthTokens {
     return {
       authCookie: this.authToken.accessToken(tokenPayload),
       refreshCookie: this.authToken.refreshToken(tokenPayload)
     };
+  }
+  
+  async revokeRefreshToken(token: string): Promise<void> {
+    await this.authToken.rejectRefreshToken(token);
   }
   
   async registration(userObject: CreateUsersDto): Promise<User | null> {
