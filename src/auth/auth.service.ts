@@ -21,7 +21,7 @@ export class AuthService {
     private authToken: AuthToken
   ) {}
 
-  async validateUser(email: string, pass: string): Promise<any> {
+  async validateUser(email: string, pass: string): Promise<User | null> {
     const user = await this.usersService.findOneByEmail(email);
     const userExist = user && await this.hashService.compareHash(pass, user?.password);
     

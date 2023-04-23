@@ -16,7 +16,7 @@ export class UsersService {
     this.redis = this.redisService.getClient();
   }
   
-  async createUser(user: CreateUsersDto) {
+  async createUser(user: CreateUsersDto): Promise<User> {
     return await this.userRepository.createUser(user);
   }
   

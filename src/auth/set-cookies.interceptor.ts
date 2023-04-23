@@ -4,7 +4,6 @@ import { Response } from 'express';
 import { AUTH_COOKIE_NAME, REFRESH_COOKIE_NAME, AuthService } from './auth.service';
 import { ConfigService } from "@nestjs/config";
 
-// Set 'resetCookies' on request object for reset auth cookie
 @Injectable()
 export class SetCookiesInterceptor implements NestInterceptor {
   constructor(private authService: AuthService, private configService: ConfigService) {}
@@ -16,11 +15,6 @@ export class SetCookiesInterceptor implements NestInterceptor {
     
     return next.handle().pipe(
       tap(() => {
-        if (request.resetCookies) { // reset auth cookie
-          response.cookie(AUTH_COOKIE_NAME, '',);
-          response.cookie(REFRESH_COOKIE_NAME, '');
-          return true;
-        }
         const { authCookie, refreshCookie } = this.authService.getAuthTokens({ id: request.user.id });
         response.cookie(AUTH_COOKIE_NAME, authCookie, { httpOnly: true, maxAge: this.configService.get('jwtAccessExpiration') });
         response.cookie(REFRESH_COOKIE_NAME, refreshCookie, { httpOnly: true, maxAge: this.configService.get('jwtRefreshExpiration') });
