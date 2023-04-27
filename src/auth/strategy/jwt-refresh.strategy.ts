@@ -2,8 +2,8 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
-import { AuthToken } from './tokens.service';
-import { REFRESH_COOKIE_NAME } from './auth.service';
+import { AuthToken } from '../tokens.service';
+import { REFRESH_COOKIE_NAME } from '../auth.service';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {

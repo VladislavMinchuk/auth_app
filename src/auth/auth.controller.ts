@@ -14,24 +14,17 @@ import {
 } from '@nestjs/common';
 import { REFRESH_COOKIE_NAME, AuthService } from './auth.service';
 import { CreateUsersDto } from '../users/dto/createUsers.dto';
-import { LocalAuthGuard } from './local-auth.guard';
 import { USESR_DETAIL, User } from '../users/entity/user.entity';
-import { JwtAuthGuard } from './jwt-auth.guard';
-import { JwtRefreshGuard } from './jwt-refresh.guard';
-import { SetCookiesInterceptor } from './set-cookies.interceptor';
-import { RemoveCookiesInterceptor } from './remove-cookies.interceptor';
-import { NonLoggedGuard } from './non-logged.guard';
+import { SetCookiesInterceptor, RemoveCookiesInterceptor } from './interceptor';
+import { LocalAuthGuard, JwtAuthGuard, JwtRefreshGuard, NonLoggedGuard } from './guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  // Only non-logged users
-  @UseGuards(NonLoggedGuard)
-  // Intercept response for serialization
-  @UseInterceptors(ClassSerializerInterceptor)
-  // Serialize response (without 'password')
-  @SerializeOptions({ groups: [USESR_DETAIL] })
+  @UseGuards(NonLoggedGuard) // Only non-logged users
+  @UseInterceptors(ClassSerializerInterceptor) // Intercept response for serialization
+  @SerializeOptions({ groups: [USESR_DETAIL] }) // Serialize response (without 'password')
   @Post('register')
   async register(@Body() registerDto: CreateUsersDto): Promise<User> {
     const newUser: User = await this.authService.registration(registerDto);
@@ -40,37 +33,29 @@ export class AuthController {
     return newUser;
   }
 
-  // Check user credentials
-  @UseGuards(LocalAuthGuard)
-  // Intercept response for serialization
-  @UseInterceptors(ClassSerializerInterceptor)
-  // Set auth cookies (access, refresh) after router handler
-  @UseInterceptors(SetCookiesInterceptor)
-  // Serialize response (without 'password')
-  @SerializeOptions({ groups: [USESR_DETAIL] })
+  @UseGuards(LocalAuthGuard) // Check user credentials
+  @UseInterceptors(ClassSerializerInterceptor) // Intercept response for serialization
+  @UseInterceptors(SetCookiesInterceptor) // Set auth cookies (access, refresh) after router handler
+  @SerializeOptions({ groups: [USESR_DETAIL] }) // Serialize response (without 'password')
   @Post('login')
   async login(@Req() request: any): Promise<User> {
     return request.user;
   }
   
-  // Remove auth cookies (access, refresh) after router handler
-  @UseInterceptors(RemoveCookiesInterceptor)
+  @UseInterceptors(RemoveCookiesInterceptor) // Remove auth cookies (access, refresh) after router handler
   @Post('logout')
   logout(): any {
     return 'OK';
   }
   
-  // Check user valid access token
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard) // Check user valid access token
   @Get('me')
   async getProfile(@Request() request: any): Promise<any> {
     return request.user;
   }
   
-  // Check user valid refresh token
-  @UseGuards(JwtRefreshGuard)
-  // Set auth cookies (access, refresh) after router handler
-  @UseInterceptors(SetCookiesInterceptor)
+  @UseGuards(JwtRefreshGuard) // Check user valid refresh token
+  @UseInterceptors(SetCookiesInterceptor) // Set auth cookies (access, refresh) after router handler
   @Post('refresh')
   async refreshToken(@Request() request: any): Promise<any> {
     await this.authService.revokeRefreshToken(request.cookies[REFRESH_COOKIE_NAME]);

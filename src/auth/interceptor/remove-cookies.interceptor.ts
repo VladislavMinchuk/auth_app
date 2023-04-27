@@ -1,7 +1,7 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
 import { Observable, tap } from "rxjs";
 import { Response } from 'express';
-import { AUTH_COOKIE_NAME, REFRESH_COOKIE_NAME } from './auth.service';
+import { AUTH_COOKIE_NAME, REFRESH_COOKIE_NAME } from '../auth.service';
 
 @Injectable()
 export class RemoveCookiesInterceptor implements NestInterceptor {

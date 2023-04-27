@@ -25,6 +25,7 @@ export class AuthToken {
   }
   
   async rejectRefreshToken(token: string): Promise<'OK'> {
+    // Remove from DB after 48h
     return await this.redis.setex(token, this.configService.get('jwtRefreshExpirationDb'), 'true');
   }
 
@@ -33,7 +34,7 @@ export class AuthToken {
       payload,
       {
         secret: this.configService.get('jwtAccessSecret'),
-        expiresIn: `${this.configService.get('jwtAccessExpiration')}m`,
+        expiresIn: `${this.configService.get('jwtAccessExpiration')}ms`, // Expire 15m
       },
     );
   }
@@ -43,9 +44,8 @@ export class AuthToken {
       payload,
       {
         secret: this.configService.get('jwtRefreshSecret'),
-        expiresIn: `${this.configService.get('jwtRefreshExpiration')}m`,
+        expiresIn: `${this.configService.get('jwtRefreshExpiration')}ms`, // Expire 48h
       },
     );
-    
   }
 }

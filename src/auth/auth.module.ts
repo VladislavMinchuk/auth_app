@@ -4,15 +4,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import config from '../config';
 import { AuthService } from './auth.service';
-import { LocalStrategy } from './local.strategy';
-import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from '../users/users.module';
-import { AuthController } from './auth.controller';
-import { HashService } from './hash.service';
 import { AuthToken } from './tokens.service';
-import { JwtRefreshStrategy } from './jwt-refresh.strategy';
-import { SetCookiesInterceptor } from './set-cookies.interceptor';
-import { RemoveCookiesInterceptor } from './remove-cookies.interceptor';
+import { HashService } from './hash.service';
+import { AuthController } from './auth.controller';
+import { JwtStrategy, LocalStrategy, JwtRefreshStrategy } from './strategy';
+import { SetCookiesInterceptor, RemoveCookiesInterceptor } from './interceptor';
 
 @Module({
   imports: [

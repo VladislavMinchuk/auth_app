@@ -8,18 +8,15 @@ export class UserRepository extends Repository<User> {
         @InjectRepository(User)
         private userRepository: Repository<User>
     ) {
-        
         super(userRepository.target, userRepository.manager, userRepository.queryRunner);
     }
     
-    // sample method for demo purposes
     async findByEmail(email: string): Promise<User | null> {
-        return await this.userRepository.findOneBy({ email }); // could also be this.findOneBy({ email });, but depending on your IDE/TS settings, could warn that userRepository is not used though. Up to you to use either of the 2 methods
+        return await this.userRepository.findOneBy({ email });
     }
     
-    // sample method for demo purposes
     async findById(id: number): Promise<User | null> {
-        return await this.userRepository.findOneBy({ id }); // could also be this.findOneBy({ email });, but depending on your IDE/TS settings, could warn that userRepository is not used though. Up to you to use either of the 2 methods
+        return await this.userRepository.findOneBy({ id });
     }
     
     async createUser(user: CreateUsersDto): Promise<User> {
