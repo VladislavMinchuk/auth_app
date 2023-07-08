@@ -28,6 +28,7 @@ npm run start:dev
 # production mode
 npm run start:prod
 ```
+Server started on port 3000 (port by default)
 
 ## Check API
 ```bash
